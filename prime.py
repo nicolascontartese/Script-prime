@@ -78,11 +78,11 @@ def excel(variable4):
             else:                
                 pass
 
-def email_enviar(equipo_compliance):
+def email_enviar(equipo_compliance,jobname):
     # Iniciamos los parámetros del script
     remitente = 'nicoserver6@gmail.com'
     destinatarios = ['nicolascontartese@gmail.com', 'nicolascontartese@gmail.com']
-    asunto = 'Equipos fuera de compliance'
+    asunto = f'Equipos fuera de compliance: {jobname}'
     cuerpo = f'Cantidad de equipos fuera de compliance: {equipo_compliance}'
     ruta_adjunto = 'archivo.csv'
     nombre_adjunto = 'archivo.csv'
@@ -130,13 +130,13 @@ def email_enviar(equipo_compliance):
     # Cerramos la conexión
     sesion_smtp.quit()
 
-def email_fallo():
+def email_fallo(info_cuerpo, k):
     # Iniciamos los parámetros del script
     remitente = 'nicoserver6@gmail.com'
     destinatarios = ['nicolascontartese@gmail.com', 'nicolascontartese@gmail.com']
-    asunto = 'Equipos fuera de compliance'
-    cuerpo = 'Fallo la conexión con el servidor y no fue posible obtener la información'
-
+    asunto = f'Equipos fuera de compliance{k}'
+    #cuerpo = 'Fallo la conexión con el servidor y no fue posible obtener la información'
+    cuerpo = (info_cuerpo + k)
     # Creamos el objeto mensaje
     mensaje = MIMEMultipart()
  
@@ -173,15 +173,21 @@ def email_fallo():
 jobname = ['Job_Compliance Audit Job_3_10_29_650_PM_8_31_2022','Job_Compliance Audit Job_3_10_29_650_PM_8_31_2022']
 
 for k in jobname:
-    salida_datos = request(k)
-    if (salida_datos!= 1):
+    salida_datos = request(k)        
+    if (salida_datos!= 1 and salida_datos !=[]):
         excel(salida_datos)
         cont = generar_reporte(salida_datos)
         print("Cantidad de equipos fuera de compliance:",cont)
-        email_enviar(cont)
+        email_enviar(cont,k)
+    elif (salida_datos == []):
+        info = "No hay equipos fuera de compliance pertenecientes a: "
+        email_fallo(info,k)
     else:
         ## Fallo la conexión
-        email_fallo()
+        info_fallo = 'Fallo la conexión con el servidor y no fue posible obtener la información: '
+        email_fallo(info_fallo,k)
         print("error")
+
+
 
 
