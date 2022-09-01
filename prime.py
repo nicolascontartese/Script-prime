@@ -177,7 +177,6 @@ for k in jobname:
     if (salida_datos!= 1 and salida_datos !=[]):
         excel(salida_datos)
         cont = generar_reporte(salida_datos)
-        print("Cantidad de equipos fuera de compliance:",cont)
         email_enviar(cont,k)
     elif (salida_datos == []):
         info = "No hay equipos fuera de compliance pertenecientes a: "
